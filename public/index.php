@@ -3,6 +3,20 @@
 require_once __DIR__ . "/../bootstrap.php";
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use JSRO\Loja\Entity\Produto;
+use JSRO\Loja\Mapper\ProdutoMapper;
+use JSRO\Loja\Service\ProdutoService;
+
+$app['produtoService'] = function (){
+    $produtoEntity = new Produto();
+    $produtoMapper = new ProdutoMapper();
+    $produtoService = new ProdutoService($produtoEntity, $produtoMapper);
+    return $produtoService;
+};
+
+$app->get('/produtos', function() use ($app) {
+    return $app['produtoService']->showTable();
+});
 
 $app->get("/clientes", function () {
 
