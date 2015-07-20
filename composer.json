@@ -4,6 +4,7 @@
     },
     "autoload": {
         "psr-4": {
+            "JSRO\\": "src/JSRO/",
             "JSRO\\Loja\\": "src/JSRO/Loja/"
         }
     }

@@ -6,10 +6,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use JSRO\Loja\Entity\Produto;
 use JSRO\Loja\Mapper\ProdutoMapper;
 use JSRO\Loja\Service\ProdutoService;
+use JSRO\Database\Connection;
 
 $app['produtoService'] = function (){
+    $connection = new Connection();
     $produtoEntity = new Produto();
-    $produtoMapper = new ProdutoMapper();
+    $produtoMapper = new ProdutoMapper($connection->getPdo());
     $produtoService = new ProdutoService($produtoEntity, $produtoMapper);
     return $produtoService;
 };
