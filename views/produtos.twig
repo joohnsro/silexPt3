@@ -1,0 +1,30 @@
+{% extends 'layout.twig' %}
+
+{% block opc1 %}active{% endblock %}
+
+{% block conteudo %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="text-center">ID</th>
+            <th>NOME</th>
+            <th class="text-center">VALOR</th>
+            <th class="text-center">AÇÃO</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for produto in produtos %}
+            <tr>
+                <td class="text-center">{{ produto.id }}</td>
+                <td>{{ produto.nome }}</td>
+                <td class="text-center">{{ produto.valor }}</td>
+                <td class="text-center"><a href="{{ path('produto', {'id':produto.id}) }}">editar</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" class="text-center">Não existem produtos cadastrados.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

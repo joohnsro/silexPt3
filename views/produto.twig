@@ -1,0 +1,46 @@
+{% extends 'layout.twig' %}
+
+{% block opc2 %}active{% endblock %}
+
+{% block conteudo %}
+    <form action="#" method="post" class="form-horizontal">
+        {% if produto.id %}
+        <div class="form-group">
+            <label for="inputId" class="control-label col-md-3">ID</label>
+            <div class="col-lg-9">
+                <input id="inputId" name="id" class="form-control" value="{{ produto.id }}" disabled>
+            </div>
+        </div>
+        {% endif %}
+        <div class="form-group">
+            <label for="inputNome" class="control-label col-md-3">NOME</label>
+            <div class="col-lg-9">
+                <input id="inputNome" name="nome" class="form-control" value="{{ produto.nome }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="textareaDescricao" class="control-label col-md-3">DESCRIÇÃO</label>
+            <div class="col-lg-9">
+                <textarea id="textareaDescricao" name="descricao" class="form-control" rows="3">{{ produto.descricao }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputValor" class="control-label col-md-3">VALOR</label>
+            <div class="col-lg-9">
+                <input id="inputValor" name="valor" class="form-control" value="{{ produto.valor }}">
+            </div>
+        </div>
+        <div class="form-group">
+            {% if produto.id %}
+                <div class="col-md-offset-8 col-lg-2">
+                    <a href="{{ path('delete', {'id': produto.id}) }}" class="btn btn-danger form-control">Deletar</a>
+                </div>
+                <div class="col-lg-2">
+            {% else %}
+                <div class="col-md-offset-10 col-lg-2">
+            {% endif %}
+                <button type="submit" class="btn btn-success form-control">Enviar</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

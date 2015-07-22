@@ -17,20 +17,19 @@ class ProdutoService
         $this->produtoMapper = $produtoMapper;
     }
 
-    public function showTable()
+    public function getProdutos($id)
     {
-        $produtos = $this->produtoMapper->select();
+        return $this->produtoMapper->select($id);
+    }
 
-        $html = "<table>";
-        $html .= "<thead><th>ID</th><th>NOME</th><th>DESCRIÇÃO</th><th>VALOR</th></thead>";
-        $html .= "<tbody>";
-        foreach ($produtos as $produto) {
-            $html .= "<tr><td>{$produto['id']}</td><td>{$produto['nome']}</td><td>{$produto['descricao']}</td><td>{$produto['valor']}</td></tr>";
-        }
-        $html .= "</tbody>";
-        $html .= "</table>";
+    public function carregarProduto(array $data, $id)
+    {
+        return $this->produtoMapper->carregarProduto($data, $id);
+    }
 
-        return $html;
+    public function deleteProduto($id)
+    {
+        return $this->produtoMapper->deleteProduto($id);
     }
 
 } 

@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/../bootstrap.php";
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use JSRO\Loja\Entity\Produto;
 use JSRO\Loja\Mapper\ProdutoMapper;
@@ -17,8 +18,41 @@ $app['produtoService'] = function (){
 };
 
 $app->get('/produtos', function() use ($app) {
-    return $app['produtoService']->showTable();
+    return $app['twig']->render('produtos.twig', ['produtos'=>$app['produtoService']->getProdutos()]);
+})->bind('produtos');
+
+$app->post('/produtos/add', function(Request $request) use ($app) {
+    $data = $request->request->all();
+    $produto = $app['produtoService']->carregarProduto($data);
+    return $app->redirect($app['url_generator']->generate('produto', ['id' => $produto]));
 });
+
+$app->get('/produtos/add', function() use ($app) {
+    return $app['twig']->render('produto.twig', [
+        'produto'=>[
+            'id' => '',
+            'nome' => '',
+            'descricao' => '',
+            'valor' => ''
+        ]
+    ]);
+})->bind('adicionar');
+
+$app->post('/produtos/{id}', function($id, Request $request) use ($app) {
+    $data = $request->request->all();
+    $produto = $app['produtoService']->carregarProduto($data, $id);
+    return $app->redirect($app['url_generator']->generate('produto', ['id' => $produto]));
+});
+
+$app->get('/produtos/{id}', function($id) use ($app) {
+    $produto = $app['produtoService']->getProdutos($id);
+    return $app['twig']->render('produto.twig', ['produto'=>$produto]);
+})->bind('produto');
+
+$app->get('/produtos/{id}/delete', function($id) use ($app) {
+    $app['produtoService']->deleteProduto($id);
+    return $app->redirect($app['url_generator']->generate('produtos'));
+})->bind('delete');
 
 $app->get("/clientes", function () {
 

@@ -2,8 +2,7 @@
 
 namespace JSRO\Loja\Mapper;
 
-use JSRO\Loja\Entity\Produto;
-use Psr\Log\InvalidArgumentException;
+use InvalidArgumentException;
 
 class ProdutoMapper
 {
@@ -15,59 +14,51 @@ class ProdutoMapper
         $this->connection = $pdo;
     }
 
-    public function insert(array $produto)
+    public function carregarProduto(array $produto, $id = null)
     {
-        $stmt = $this->connection->prepare("Insert into produtos (nome, valor, descricao) VALUES(:nome, :valor, :descricao)");
-        $stmt->bindValue("nome", $produto["nome"]);
-        $stmt->bindValue("valor", $produto["valor"]);
-        $stmt->bindValue("descricao", $produto["descricao"]);
+        if($id) {
+            $stmt = $this->connection->prepare("Update produtos set nome=:nome, valor=:valor, descricao=:descricao where id={$id}");
+        } else {
+            $stmt = $this->connection->prepare("Insert into produtos (nome, valor, descricao) VALUES(:nome, :valor, :descricao)");
+        }
+        $stmt->bindParam("nome", $produto["nome"]);
+        $stmt->bindParam("valor", $produto["valor"]);
+        $stmt->bindParam("descricao", $produto["descricao"]);
 
         if ( !$stmt->execute() ){
-            throw new InvalidArgumentException("O produto não foi inserido.");
+            throw new InvalidArgumentException("O produto não foi carregado com sucesso.");
         }
 
-        return $produto;
+        if($id) {
+            $res = $id;
+        } else {
+            $res = $this->connection->lastInsertId();
+        }
+        return $res;
     }
 
-    public function select()
+    public function select($id = null)
     {
-        $produtos = $this->connection->query("Select * from produtos");
-        return $produtos;
-    }
-
-    public function update(array $produto)
-    {
-        $stmt = $this->connection->prepare("Update produtos set nome=:nome, valor=:valor, descricao=:descricao where id=:id");
-        $stmt->bindValue("id", $produto["id"]);
-        $stmt->bindValue("nome", $produto["nome"]);
-        $stmt->bindValue("valor", $produto["valor"]);
-        $stmt->bindValue("descricao", $produto["descricao"]);
-
-        if ( !$stmt->execute() ){
-            throw new InvalidArgumentException("O produto não foi atualizado.");
+        if (!$id) {
+            $produtos = $this->connection->query("Select * from produtos");
+            return $produtos;
         }
 
-        return $produto;
+        $stmt = $this->connection->prepare("Select * from produtos where id=:id");
+        $stmt->bindParam("id", $id);
+
+        $stmt->execute();
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public function fixture()
+    public function deleteProduto($id)
     {
-        $produtos = [
-            array(
-                'nome' => 'Tênis',
-                'descricao' => 'Tênis para prática de esportes.',
-                'valor' => '199,90'
-            ),
-            array(
-                'nome' => 'Sapatênis',
-                'descricao' => 'Tênis para uso no trabalho.',
-                'valor' => '109,90'
-            ),
-        ];
+        $stmt = $this->connection->prepare("Delete from produtos where id={$id}");
+        $stmt->bindParam("id", $id);
+        $stmt->execute();
 
-        foreach ($produtos as $produto) {
-            $this->insert($produto);
-        }
+        return true;
     }
 
-} 
+}
